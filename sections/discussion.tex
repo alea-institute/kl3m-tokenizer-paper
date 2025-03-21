@@ -1,0 +1,51 @@
+\section{Discussion}
+
+Our evaluation results demonstrate the advantages of domain-specific tokenization for legal, financial, and governmental text. This section discusses the practical implications of our findings and examines key limitations and challenges of specialized tokenizers.
+
+\subsection{Practical Benefits for Professional Applications}
+
+The efficiency advantages of KL3M tokenizers translate to several practical benefits:
+
+\begin{itemize}
+    \item \textbf{Expanded effective context window:} When processing legal or financial documents with thousands of domain-specific terms and citations, the 9-17\% overall efficiency improvement and up to 83\% improvement for specific terminology substantially expands the effective context window. This allows models to process more complete documents without truncation.
+    
+    \item \textbf{Reduced computational costs:} The reduced token count directly translates to lower computational requirements for training and inference. For applications processing millions of legal or financial documents, this efficiency can yield significant computational savings.
+    
+    \item \textbf{Enhanced cross-document reasoning:} By representing citations and references more efficiently and coherently, KL3M-004-128k-cased enables better tracking of references across documents, which is crucial for legal research, financial analysis, and regulatory compliance tasks.
+\end{itemize}
+
+For fine-tuning applications, our domain-specific tokenizers also deliver notable benefits. When fine-tuning general models on legal or financial texts, tokenization mismatches between pre-training and fine-tuning data can disrupt performance. By using tokenizers specifically designed for professional content during both pre-training and fine-tuning, this mismatch can be reduced or eliminated, leading to better specialized model performance.
+
+\subsection{Limitations and Challenges}
+
+\subsubsection{Domain Specificity vs. Generality}
+
+A core limitation of specialized tokenizers lies in the inherent trade-off between domain specificity and broader applicability. By allocating vocabulary space to domain-specific terms, these tokenizers leave less room for general terms, which can enhance performance on targeted content but may compromise effectiveness on more general text. While our analysis showed that KL3M-004-128k-cased performed well on general content, more extensive evaluation across diverse general text types would be needed to fully assess this trade-off.
+
+Furthermore, KL3M tokenizers, designed specifically for legal and financial domains, may prove less efficient when applied to other specialized fields such as medicine or chemistry, limiting their cross-domain utility. Additionally, like any fixed-vocabulary tokenizer, they may struggle to efficiently handle novel terminology that emerges after the training data is set, potentially reducing their adaptability to evolving language.
+
+\subsubsection{Implementation Challenges}
+
+Several technical challenges surfaced during implementation. One key issue was striking the right balance between cased and uncased variants; although we provide both options, the best choice depends heavily on the specific application requirements. Another difficulty arose in custom token selection, where identifying domain-specific tokens required considerable expert knowledge, suggesting that more systematic methods could enhance the process. 
+
+Furthermore, while we obtained high-quality, copyright-free legal and financial texts for training, acquisition of additional content may be a significant limitation in subsequent efforts to further improve tokenizer quality and performance. The quality and representativeness of training data remain crucial factors in tokenizer performance.
+
+\subsubsection{Ecosystem Compatibility}
+
+Although our implementation ensures compatibility with the Hugging Face ecosystem, broader compatibility issues exist. Certain model architectures rely on assumptions about tokenization that may not align with the design of specialized tokenizers, posing integration challenges. Additionally, using our tokenizers with existing pre-trained models requires careful alignment or adjustments to embedding layers to ensure proper functionality.
+
+The NLP ecosystem tends to prioritize support for a handful of widely used tokenizers, which could restrict the availability of tools and libraries compatible with our specialized approach. Despite these challenges, the significant efficiency advantages demonstrated in our evaluation suggest that overcoming these implementation and compatibility issues would be worthwhile for professional applications working with legal and financial documents.
+
+\subsection{Future Work}
+
+Several promising directions for future work emerge from our research:
+
+\begin{itemize}
+    \item \textbf{Downstream task evaluation:} Providing public and reproducible experiments on downstream training tasks like masked language modeling (MLM) and causal language modeling (CLM) would quantify the impact of domain-specific tokenization on model quality, with particular emphasis on the OCR/error correction capabilities of our character-level tokenizers.
+    
+    \item \textbf{Tokenizer swapping:} Investigating the impact and methodology of tokenizer swapping for established pretrained models like \texttt{LLaMA3} could enable existing models to benefit from domain-specific tokenization without complete retraining, potentially offering an efficient path to domain adaptation.
+    
+    \item \textbf{Custom token extensions:} Further refinement of the custom token selection process could enhance domain coverage, particularly through development of systematic methods to identify high-value domain-specific tokens that maximize efficiency gains across diverse professional documents.
+    
+    \item \textbf{Non-English professional language support:} Extending our approach to common non-English professional languages (e.g., EU legal frameworks in French and German, international financial reporting terminology) would address the growing need for multilingual domain-specific NLP capabilities in global regulatory and business contexts.
+\end{itemize}

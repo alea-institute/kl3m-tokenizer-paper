@@ -1,0 +1,49 @@
+\section{Background and Related Work}
+
+\subsection{Tokenization Evolution}
+
+Tokenization approaches in NLP have evolved from simple word-splitting \cite{webster1992tokenization} to sophisticated algorithms optimized for specific linguistic properties and computational requirements.\cite{mielke2021between}
+
+Word-level tokenization, common in early NLP systems \cite{webster1992tokenization}, faced significant challenges with out-of-vocabulary words and morphological variance. Character-level approaches \cite{ma2x020charbert} addressed vocabulary limitations but generated longer sequences and lost semantic coherence. The tokenization-free CANINE approach \cite{clark2022canine} eliminates the need for explicit tokenization but required specialized model architectures.
+
+Modern NLP systems predominantly using subword tokenization, with Byte-Pair Encoding (BPE) \cite{sennrich2016neural,gage1994new} became the de facto standard for large language models \cite{brown2020language}. Alternative methods include SentencePiece \cite{kudo2018sentencepiece}, which offer language-agnostic tokenization such as WordPiece used in BERT \cite{devlin2019bert}. These approaches balance vocabulary size constraints with morphological awareness.
+
+\subsection{Byte-Pair Encoding}
+
+Byte-Pair Encoding (BPE) was originally developed as a data compression algorithm \cite{gage1994new} and later adapted for NLP tokenization \cite{sennrich2016neural}. The algorithm can be summarized as:
+
+\begin{enumerate}
+    \item Start with a vocabulary of individual characters;
+    \item Identify the most frequent adjacent character pair and merge them into a new token;
+    \item Repeat this process iteratively until a desired vocabulary size or alternative stopping condition is reached.
+\end{enumerate}
+
+BPE offers several key benefits, including its ability to effectively manage rare words and morphological variations by breaking them down into smaller, meaningful subword units.  This subword tokenization approach also allows BPE to maintain a fixed vocabulary size, which is crucial for computational efficiency in NLP models.  Furthermore, BPE is designed to preserve frequent words as single tokens, while less common words are segmented into subwords, striking a balance between efficient representation and the ability to handle out-of-vocabulary terms.  
+
+However, standard BPE approaches have limitations. Bostrom and Durrett \cite{bostrom2020byte} demonstrated that BPE can be suboptimal for language model pretraining due to its frequency-based merging, which may not align with the linguistic intuitions of typical users. 
+
+\subsection{Domain-Specific Tokenization}
+
+While general-purpose tokenizers are designed for broad applicability, specialized domains can benefit significantly from tailored tokenization approaches.
+
+In the biomedical domain, BioBERT \cite{lee2020biobert} demonstrated that even with standard tokenization, domain-specific pretraining improves performance. Similarly, SciBERT \cite{beltagy2019scibert} for scientific text and BERTweet \cite{nguyen2020bertweet} for social media text show that domain adaptation at the model level improves performance, but they do not specifically address tokenization challenges.
+
+Legal and financial domains present unique tokenization challenges due to specialized terminology, citation formats, and document structures. Chalkidis et al. \cite{chalkidis2020legal} introduced Legal-BERT, which adapted BERT for legal text but retained the original WordPiece tokenizer, focusing adaptation on the model parameters rather than the tokenization approach.
+
+In the financial domain, Araci \cite{araci2019finbert} proposed FinBERT for financial sentiment analysis, while Mansar et al. \cite{mansar2021finsim} organized the FinSim shared task focusing on financial terminology. However, these works primarily address model adaptation rather than tokenization optimization.
+
+To date, we are not aware of any significant effort to build and evaluate domain-specific tokenizers for legal, regulatory and financial texts.  
+
+\subsection{Character-Level and Other Approaches}
+
+Character-level models and tokenizers have seen renewed interest for specialized applications. Ma et al. \cite{ma2020charbert} proposed CharBERT, which incorporates character-level information into the model architecture. Clark et al. \cite{clark2022canine} introduced CANINE, a tokenization-free encoder that operates directly on Unicode characters.
+
+These approaches are particularly relevant for tasks requiring character-level understanding, such as spelling correction, OCR post-processing, and handling of noisy text. However, they typically require specific model architectures designed to work with character-level input, rather than providing character-aware tokenizers for existing architectures.
+
+\subsection{Tokenization Evaluation}
+
+Evaluating tokenizer performance presents unique challenges. Rust et al. \cite{rust2020good} assessed how tokenizer quality impacts model performance for multilingual applications. The authors found that the choice of tokenizer significantly affects downstream performance, particularly for languages with complex morphology.
+
+Most tokenizer evaluations focus on intrinsic measures like vocabulary coverage or extrinsic measures of downstream task performance. There is limited work on evaluating tokenizers specifically for domain-specific applications, with most evaluations focusing on general text or cross-lingual scenarios.
+
+Our work builds on these foundations but differs in several important ways. Unlike previous approaches that adapt models but not tokenizers to domains, we directly address the tokenization challenges in legal and financial text. 

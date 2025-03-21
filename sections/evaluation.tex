@@ -1,0 +1,49 @@
+\section{Evaluation Methodology}
+\label{sec:eval}
+
+This section describes our methodology for evaluating the performance of KL3M tokenizers compared to established tokenizers like \texttt{gpt-4o}, \texttt{LLaMA3}, and \texttt{gpt-2}. We assess three key dimensions: tokenization efficiency, domain term representation, and token size distribution.
+
+\subsection{Datasets and Tokenizers}
+
+We evaluated performance across five diverse datasets selected to represent different domains:
+
+\begin{itemize}
+    \item \textbf{US Code}: Federal statutes with specialized legal terminology and structure
+    \item \textbf{Congressional Hearings}: Formal political dialogue and legislative terminology
+    \item \textbf{Court Documents}: Judicial language with complex citation patterns
+    \item \textbf{SEC Filings}: Financial disclosure documents with business and accounting terminology
+    \item \textbf{General Content}: Non-specialized texts for baseline comparison
+\end{itemize}
+
+Each dataset contains 20-100 documents, providing a representative sample of each domain's linguistic characteristics. Documents were preprocessed to remove markup while preserving text structure.
+
+We compared the following tokenizers:
+\begin{itemize}
+    \item \textbf{KL3M Standard}: \texttt{kl3m-004-128k-cased}, \texttt{kl3m-004-128k-uncased}, kl3m-003-64k
+    \item \textbf{KL3M Character}: kl3m-004-char-4k-cased, kl3m-004-char-8k-cased, kl3m-004-char-16k-cased
+    \item \textbf{Comparison}: \texttt{gpt-4o}, \texttt{LLaMA3}, \texttt{gpt-2}
+\end{itemize}
+
+\subsection{Evaluation Metrics}
+
+\subsubsection{Tokenization Efficiency}
+
+We measure efficiency using the tokens per character (TPC) ratio across datasets:
+
+\begin{equation}
+\text{TPC} = \frac{\text{Number of tokens}}{\text{Number of characters}}
+\end{equation}
+
+TPC represents the inverse of compression ratio, with lower values indicating higher efficiency as fewer tokens are needed to represent the same text. This directly impacts computational requirements for processing text.
+
+\subsubsection{Domain Term Representation}
+
+We evaluated how effectively each tokenizer represents domain-specific terminology by measuring token counts for common legal and financial terms. This analysis reveals how well tokenizers capture specialized language patterns, which affects model performance when processing domain-specific content.
+
+\subsubsection{Token Size Distribution}
+
+We analyzed the distribution of token lengths (in characters) across each tokenizer's vocabulary, categorizing tokens as short (1-2 characters), medium (3-6 characters), or long (7+ characters). This distribution provides insights into tokenization strategies and their implications for efficiency and semantic preservation.
+
+\subsubsection{Character Tokenizer Evaluation}
+
+For the specialized KL3M character tokenizers, we conducted additional analyses comparing their tokenization patterns on text containing errors typical of OCR and manual transcription processes. This evaluation demonstrates how consistent character-level tokenization affects error correction capabilities.

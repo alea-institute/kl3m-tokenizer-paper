@@ -1,0 +1,21 @@
+% LaTeX table for token efficiency analysis (tokens per character)
+\begin{table}[ht]
+\centering
+\caption{Token efficiency (tokens per character) across datasets}
+\label{tab:token-efficiency}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Dataset & kl3m\mbox{-}004\mbox{-}128k\mbox{-}cased & kl3m\mbox{-}004\mbox{-}128k\mbox{-}uncased & kl3m\mbox{-}003\mbox{-}64k & gpt\mbox{-}4o & llama3 & gpt2 \\
+\midrule
+Congressional Hearings & 0.2292 & \textbf{0.2231} & 0.2808 & 0.2482 & 0.2475 & 0.3765 \\
+Court Documents & 0.2741 & \textbf{0.2692} & 0.2907 & 0.2971 & 0.2986 & 0.3524 \\
+General Content & 0.2057 & \textbf{0.2033} & 0.2223 & \textbf{0.2033} & 0.2066 & 0.2116 \\
+SEC Filings & 0.1816 & \textbf{0.1804} & 0.1915 & 0.1976 & 0.1992 & 0.3720 \\
+US Code & 0.3181 & \textbf{0.3171} & 0.3296 & 0.3716 & 0.3717 & 0.3595 \\
+\midrule
+Average & 0.2417 & \textbf{0.2386} & 0.2630 & 0.2636 & 0.2647 & 0.3344 \\
+\bottomrule
+\end{tabular}
+\caption*{\small \textit{Note: Lower values indicate more efficient tokenization (fewer tokens per character).}}
+\end{table}

@@ -1,0 +1,106 @@
+\documentclass[10pt,conference]{IEEEtran}
+
+% Standard packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,positioning,shadows,trees}
+
+% Code formatting packages
+\usepackage{minted}
+\usepackage{upquote}
+\usepackage{microtype}
+
+% Configure minted for better code formatting
+\setminted{
+  frame=single,
+  framesep=2mm,
+  baselinestretch=1.2,
+  fontsize=\footnotesize,
+  breaklines=true,
+  tabsize=4,
+  linenos=true,
+  style=default,
+  autogobble=true
+}
+
+% Enable page numbering (plain style: number at bottom center)
+\pagestyle{plain}
+
+% Custom syntax highlighting colors
+\definecolor{bg}{rgb}{0.98,0.98,0.98}
+\definecolor{comment}{rgb}{0.4,0.6,0.4}
+\definecolor{keyword}{rgb}{0.0,0.4,0.8}
+\definecolor{string}{rgb}{0.6,0.0,0.0}
+
+% Custom commands and settings
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue
+}
+
+% Title information
+\title{KL3M Tokenizers: A Family of Domain-Specific and Character-Level Tokenizers for Legal, Financial, and Preprocessing Applications}
+
+\author{
+    \IEEEauthorblockN{Michael J. Bommarito II}
+    \IEEEauthorblockA{ALEA Institute\thanks{Email: hello@aleainstitute.ai}}
+    \IEEEauthorblockA{Stanford CodeX}
+    \and
+    \IEEEauthorblockN{Daniel Martin Katz}
+    \IEEEauthorblockA{Illinois Tech - Chicago Kent Law}
+    \IEEEauthorblockA{Bucerius Law School}
+    \IEEEauthorblockA{ALEA Institute}
+    \IEEEauthorblockA{Stanford CodeX}
+
+    \and
+    \IEEEauthorblockN{Jillian Bommarito}
+    \IEEEauthorblockA{ALEA Institute}
+}
+
+% Authors updated to match the KL3M data paper team
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+We present the KL3M tokenizers, a family of specialized tokenizers for legal, financial, and governmental text. Despite established work on tokenization, specialized tokenizers for professional domains remain understudied. Our paper offers two main contributions to this area.
+
+First, we introduce domain-specific BPE tokenizers for legal, financial, and governmental text. Our kl3m-004-128k-cased tokenizer uses 9-17\% fewer tokens than GPT-4o and Llama3 for domain-specific documents, despite having a smaller vocabulary. For specialized terminology, our cased tokenizer is even more efficient, using up to 83\% fewer tokens for legal terms and 39\% fewer tokens for financial terms.
+
+Second, we develop character-level BPE tokenizers (4K, 8K, and 16K vocabulary sizes) for text correction tasks like OCR post-processing. These tokenizers keep consistent token boundaries between error-containing and correct text, making it easier for models to learn correction patterns.
+
+These tokenizers help professional applications by fitting more text in context windows, reducing computational needs, and preserving the meaning of domain-specific terms. Our analysis shows these efficiency gains directly benefit the processing of long legal and financial documents. We release all tokenizers and code through GitHub and Hugging Face to support further research in specialized tokenization.\footnote{For correspondence or assistance accessing our data and models: hello@aleainstitute.ai}
+\end{abstract}
+
+% Import all sections
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/methodology}
+\input{sections/evaluation}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\section{Acknowledgements}
+We drafted and revised this paper with the assistance of large language models.  All errors or omissions are our own.
+
+% Bibliography
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography/references}
+
+% Appendix
+\input{sections/appendix}
+
+\end{document}

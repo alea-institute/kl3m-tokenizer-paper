@@ -1,0 +1,46 @@
+\section{Introduction}
+
+Tokenization — the process of converting raw text into discrete tokens — is a fundamental component of modern language models \cite{brown2020language, chowdhery2023palm} that has significant impacts on model performance \cite{rust2020good}. While Byte-Pair Encoding (BPE) \cite{sennrich2016neural, gage1994new} and similar subword tokenization approaches are widely used across domains, recent work has questioned their universal optimality, especially when trained on general corpora \cite{bostrom2020byte}.
+
+In this work, we present the results of our research on tokenizers we developed for the KL3M dataset and models.  This research suggests that specialized domains like law and applications like OCR correction can significantly benefit from custom tokenization approaches.
+
+As an example, consider a legal citation such as \texttt{Fed. R. Civ. P. 56(a)}.  This citation refers to a critical rule in U.S. Federal court procedure that allows a party to ask the court to resolve a case or issue without a full trial.  The presence of this citation is an important indicator for classification tasks, and when drafting, it is critical that motions and briefs properly invoke the rule.  Similarly, financial documents are full of terms and abbreviations that are key to extraction tasks, such \texttt{EBITDA} or \texttt{diluted}.
+
+\begin{table*}[h!]
+\centering
+\small
+\caption{Tokenization comparison across domains}
+\label{tab:token-compare}
+\begin{tabular}{p{2.5cm}p{7cm}p{7cm}}
+\toprule
+\textbf{Tokenizer} & \textbf{Legal Text} & \textbf{Financial Text} \\
+& \texttt{Fed. R. Civ. P. 56(a)} & \texttt{EBITDA increased by 14.3\%} \\
+\midrule
+kl3m-004-128k-cased & ["Fed.", " ", "R.", " ", "Civ.", " ", "P.", " 56", "(a)"] & ["EBITDA", " increased", " by", " 14", ".", "3", "\%"] \\
+\midrule
+kl3m-004-char-8k-cased & ["F", "ed", ".", " R", ".", " C", "iv", ".", " P", ".", " 56", "(", "a", ")"] & ["EB", "IT", "DA", " in", "cre", "as", "ed", " by", " 14", ".", "3", "\%"] \\
+\midrule
+GPT-4o & ["Fed", ".", " R", ".", " Civ", ".", " P", ".", " 56", "(a)"] & ["EB", "IT", "DA", " increased", " by", " ", "14", ".", "3", "\%"] \\
+\midrule
+LLaMA 3 & ["Fed", ".", " R", ".", " Civ", ".", " P", ".", " 56", "(a)"] & ["EB", "IT", "DA", " increased", " by", " ", "14", ".", "3", "\%"] \\
+\midrule
+GPT-2 & ["Fed", ".", " R", ".", " Civ", ".", " P", ".", " 56", "(a)"] & ["E", "BIT", "DA", " increased", " by", " 14", ".", "3", "\%"] \\
+\midrule
+RoBERTa & ["Fed", ".", " R", ".", " Civ", ".", " P", ".", " 56", "(a)"] & ["E", "BIT", "DA", " increased", " by", " 14", ".", "3", "\%"] \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Unfortunately, as highlighted in Table \ref{tab:token-compare}, even the largest tokenizers from frontier labs fail to efficiently capture such language.  For example, both \texttt{cl100k\_base}, the tokenizer behind \texttt{gpt-4o}, and the LLaMA 3 tokenizer require three tokens for \texttt{EBITDA} or \texttt{diluted} each.  In the case of legal citations, these tokenizers also fail to capture the fact that each token is an abbreviation, for example, by splitting the letter R from the abbreviating period.
+
+While these differences may seem minor, anyone who has reviewed embedding layers or investigated inference pathologies like hallucination will appreciate the impact that such tokenizer issues can cause.  Furthermore, tokenizer efficiency is a critical factor in the amount of text that can fit into a model's context window.  While this has implications for the cost of training and inference generally, it is especially important for the legal and financial domain, where documents often have both more words and longer words than in other contexts.
+
+As part of our research on datasets and models in the legal domain, we investigated a number of alternative approaches to tokenization that might address issues like the examples above.  This research began with the \texttt{kl3m-001-32k} tokenizer and then branched into two separate groups of models: domain-specific BPE tokenizers and character-level BPE tokenizers.  
+
+Our domain-specific KL3M tokenizers (\texttt{kl3m-003-64k}, \texttt{kl3m-004-128k-cased}, \texttt{kl3m-004-128k-uncased}) are 9-17\% more efficient than \texttt{cl100k\_base}, the \texttt{gpt-4o} tokenizer, despite having a substantially smaller vocabulary. The cased variant in particular (\texttt{kl3m-004-128k-cased}) provides excellent performance across the legal and financial domains while maintaining case sensitivity, which is critical for many domain tasks.
+
+Our character-level BPE tokenizers (\texttt{kl3m-004-char-4k}, \texttt{kl3m-004-char-8k}, \texttt{kl3m-004-char-16k}), though less thoroughly researched, have been instrumental in training our OCR correction models, such as the 500M parameter \texttt{kl3m-004-correction-001} model.
+
+The dual approach of domain-specific and character-level tokenizers within the KL3M family addresses complementary needs we faced in the KL3M project: efficient representation for the most common tasks and character-level precision for error correction in pretrain and RAG applications. Although our work focuses on legal, financial, and governmental domains, we believe similar approaches could potentially be relevant for other specialized fields. 
+
+All KL3M tokenizers are available on GitHub (\url{https://github.com/alea-institute/kl3m-tokenizers} and Hugging Face (\url{https://huggingface.co/alea-institute}), along with the source code, training data, and related models.  The source code for this paper, including \LaTeX and replication for figures and tables, is available at \url{https://github.com/alea-institute/kl3m-tokenizer-paper/}.

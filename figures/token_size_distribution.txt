@@ -1,0 +1,28 @@
+% LaTeX table for token size distribution analysis
+\begin{table}[ht]
+\centering
+\caption{Token size distribution (percentage of vocabulary by character length)}
+\label{tab:token-size-distribution}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Length & kl3m\mbox{-}004\mbox{-}128k\mbox{-}cased & kl3m\mbox{-}004\mbox{-}128k\mbox{-}uncased & gpt\mbox{-}4o & llama3 & roberta\mbox{-}base & gpt2 \\
+\midrule
+1 & 0.2\% & 0.2\% & 10.9\% & 0.2\% & 0.5\% & 0.5\% \\
+2 & 2.8\% & 1.8\% & 20.5\% & 3.3\% & 3.8\% & 3.8\% \\
+3 & 12.5\% & 15.0\% & 19.3\% & 12.0\% & 10.4\% & 10.4\% \\
+4 & 17.2\% & 16.9\% & 17.8\% & 14.5\% & 14.4\% & 14.4\% \\
+5 & 13.1\% & 12.8\% & 12.6\% & 13.4\% & 14.5\% & 14.5\% \\
+6 & 10.8\% & 10.6\% & 7.5\% & 15.1\% & 12.8\% & 12.8\% \\
+7 & 9.3\% & 9.2\% & 4.9\% & 11.7\% & 11.8\% & 11.8\% \\
+8 & 8.3\% & 8.0\% & 3.0\% & 8.4\% & 10.1\% & 10.1\% \\
+9 & 6.7\% & 6.4\% & 1.6\% & 7.5\% & 7.6\% & 7.7\% \\
+10 & 5.4\% & 5.0\% & 0.7\% & 4.5\% & 5.6\% & 5.6\% \\
+\midrule
+Total $\leq 5$ & 45.8\% & 46.8\% & 81.2\% & 43.4\% & 43.6\% & 43.6\% \\
+Total 6-10 & 40.6\% & 39.2\% & 17.7\% & 47.1\% & 47.9\% & 47.9\% \\
+Total $\leq 10$ & 86.3\% & 86.0\% & 99.0\% & 90.5\% & 91.5\% & 91.5\% \\
+\bottomrule
+\end{tabular}
+\caption*{\small \textit{Note: For tiktoken models like GPT-4o, only a subset of tokens can be individually decoded, so statistics are based on a partial sample.}}
+\end{table}

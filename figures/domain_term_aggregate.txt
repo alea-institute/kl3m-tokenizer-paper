@@ -1,0 +1,18 @@
+% LaTeX table for domain-specific term tokenization aggregate statistics
+\begin{table*}[ht]
+\centering
+\caption{Average token count by domain across tokenizers}
+\label{tab:domain-term-aggregate}
+\begin{tabular}{lrrr}
+\toprule
+Tokenizer & Legal Terms & Financial Terms & Overall \\
+\midrule
+kl3m\mbox{-}004\mbox{-}128k\mbox{-}cased & \textbf{4.20} & \textbf{3.10} & \textbf{3.65} \\
+kl3m\mbox{-}004\mbox{-}128k\mbox{-}uncased & \textbf{4.20} & \textbf{3.10} & \textbf{3.65} \\
+gpt\mbox{-}4o & 6.50 & 3.20 & 4.85 \\
+llama3 & 7.70 & 4.30 & 6.00 \\
+roberta\mbox{-}base & 9.30 & 5.80 & 7.55 \\
+gpt2 & 7.30 & 3.80 & 5.55 \\
+\bottomrule
+\end{tabular}
+\end{table*}

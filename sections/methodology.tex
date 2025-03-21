@@ -1,0 +1,105 @@
+\section{Methodology}
+
+This section details our approach to designing and training the KL3M tokenizers, including the data sources and tokenizer design.
+
+\subsection{Data Sources}
+
+The KL3M tokenizers were trained on a diverse corpus of legal, financial, and governmental documents from our KL3M dataset. A fundamental principle of our approach was to use only data that is free from copyright or licensing restrictions, ensuring that the training data and resulting tokenizers can be used without restriction.
+
+Primary data sources included:
+
+\begin{itemize}
+    \item US government documents and websites produced by the executive or legislative branches under 17 USC 105
+    \item EU government documents produced under CC-BY or Decision 2011/833
+    \item US state and federal court opinions and associated documents
+    \item Publicy-traded and registered company filings, including financial reports and legal agreements
+    \item Granted patents filed with the USPTO
+\end{itemize}
+
+These datasets can be browsed under our Hugging Face account: \url{https://huggingface.co/alea-institute}.
+
+\subsection{Tokenizer Design}
+
+While our goal is to address a number of issues with traditional BPE tokenizers, we also wanted to ensure that our tokenizers could be easily used by ourselves and others.  Therefore, we constrained our implementations to be compatible with the \texttt{tokenizers} BPE implementation, also available through the \texttt{transformers} library, to maximize compatibility with existing libraries and pipelines.
+
+\subsubsection{Original Tokenizer: kl3m-001-32k}
+
+Our first tokenizer, \texttt{kl3m-001-32k}, was designed as a test bed for our first models, \texttt{kl3m-002-170m} and \texttt{kl3m-003-1.7b}.  In addition to its domain-specific training corpus, this tokenizer also featured a number of alterations:
+
+\begin{itemize}
+  \item no space (Ġ) prefixing
+  \item a small set of custom tokens, including limited whitespace, Markdown, HTML, JSON, XML, and numeric tokens
+  \item special tokens for both MLM and CLM tasks
+  \item power-of-2 padding
+\end{itemize}
+
+While we successfully trained models up to 1.7B on this tokenizer, our experience, especially with the decreased efficiency from the removal of space prefixing and struggles with OCR correction, led us to split our research into two families of tokenizers - domain-specific BPEs and character-level BPEs.
+
+\subsubsection{Domain-Specific BPE}
+While \texttt{kl3m-001-32k}'s small vocabulary had advantages for memory usage, we unsurprisingly found that 32K tokens was inefficient for many typical generative use cases.  Furthermore, we found that custom tokens were extremely useful and increased reliability in a number of important use cases.  As a result, we substantially increased the size of our vocabulary to 64K and 128K, increased the size and breadth of custom tokens, standardized on NFKC normalization, and introduced an uncased variant of our 128K tokenizer for embedding models.
+
+\subsubsection{Character Tokenizers}
+Conversely, for error correction and normalization tasks like OCR post-processing, we found that the 32K vocabularly was likely too large, requiring substantially more parameters to learn basic operations like  character confusion or transposition.  Given that we needed to use these models at the scale of pretrain corpora, model size and speed was an extremely important consideration.
+
+To address this, we developed specialized character-level tokenizers with 4K, 8K, and 16K vocabulary sizes.  These tokenizers rely on a modified training technique that constrains the maximum merged token length to emphasize character-level patterns.  The 4K and 8K tokenizers have a maximum token length of three characters, while the 16K tokenizer allows up to four characters per token.
+
+Character-level tokenizers are particularly valuable for text error correction in legal and financial documents, where errors can significantly alter meaning. Errors in these domains frequently occur in predictable patterns from multiple sources including OCR, manual transcription, and user entry:
+
+\begin{itemize}
+    \item Character confusions: similar-looking characters (e.g., "c"/"e", "5"/"S", "0"/"o", "l"/"1")
+    \item Spacing errors: inappropriate spaces or joined words (e.g., "S tates" instead of "States")
+    \item Character transpositions: reversed character order (e.g., "Teh" instead of "The")
+    \item Domain-specific substitutions: legal/financial symbols (e.g., "§"/"S", "¶"/"P")
+    \item Typographical errors: common keyboard-based mistakes (e.g., adjacent key hits, double letters)
+    \item Phonetic errors: spelling based on pronunciation (e.g., "eksept" instead of "except")
+\end{itemize}
+
+
+Drawing on character-aware approaches like CharBERT \cite{ma2020charbert} and CANINE \cite{clark2022canine}, but with important modifications, our character tokenizers are optimized for different use cases:
+
+\begin{itemize}
+    \item \textbf{kl3m-004-char-4k-cased:} Optimized for pure character-level models and fine-grained spelling correction, similar to character-based approaches in \cite{ma2020charbert}. This tokenizer provides granular character-by-character tokenization ideal for learning exact substitutions (e.g., "c" → "e") in text errors.
+    
+    \item \textbf{kl3m-004-char-8k-cased:} Balanced approach for general text error correction, with slightly larger character groupings that efficiently handle both character-level errors and common error patterns in various document types.
+    
+    \item \textbf{kl3m-004-char-16k-cased:} Incorporates domain-specific character sequences for specialized correction tasks while maintaining character-level precision, suitable for more nuanced, domain-specific correction in legal and financial documents.
+\end{itemize}
+
+Unlike standard BPE tokenizers that treat text errors as unknown tokens or fragment them inconsistently, our character tokenizers maintain stable token boundaries between incorrect and correct forms. This consistency creates a more direct mapping for transformer models to learn correction patterns, aligning with findings from Wang et al. \cite{wang2022deepstructure} on structure-preserving tokenization.
+
+\subsection{Custom Tokens}
+
+A key aspect of the KL3M tokenizers is the deliberate inclusion of domain-specific and format-specific tokens that might not emerge naturally from BPE training on a general corpus. By explicitly adding these custom tokens, we can steer both tokenizer training and downstream models more easily. 
+
+These custom tokens are grouped into the following categories:
+
+\begin{itemize}
+    \item \textbf{Whitespace}: Combinations and repetitions of spaces, tabs, newlines, and carriage returns
+    \item \textbf{Markdown}: Common Markdown elements, especially related to document headings, formatting, and lists
+    \item \textbf{HTML}: Common HTML tags, including opening and closing tag substrings and attributes
+    \item \textbf{JSON}: Common JSON tokens
+    \item \textbf{XML}: Common XML tokens
+    \item \textbf{Years}: Years from 1776 to 2050
+    \item \textbf{Numbers}: Numbers from 1-999
+    \item \textbf{Enumerations}: Enumerations such as Roman numerals, including in parenthetical format (e.g., \texttt{(iv)})
+    \item \textbf{Citations}: Common legal citations and related tokens derived from the Free Law Project's \texttt{reporters-db}
+\end{itemize}
+
+While the 32K tokenizer included some of these custom token groups, the 64K and 128K tokenizers contain many more custom tokens.
+
+\subsection{Power-of-2 Padding}
+
+All KL3M tokenizers are padded to align with powers of 2 during the final stage of training.  In the event that the standard BPE training algorithm stopped before hitting the target vocabulary size, additional whitespace combination tokens (e.g., repeating spaces or newlines) are added until the vocabulary is an exact power.  This provides enhanced efficiency opportunities for storage, computation, and search.
+
+% Table with summary of tokenizers
+% Links:
+% - kl3m_tokenizers/tokenizers/kl3m_001/train_tokenizer.py
+% - kl3m_tokenizers/tokenizers/kl3m_003/train_tokenizer.py
+% - kl3m_tokenizers/tokenizers/kl3m_004/train_tokenizer.py
+% - kl3m_tokenizers/tokenizers/kl3m_004/train_char_tokenizer.py
+% Include:
+% - name
+% - vocabulary size
+% - space prefix
+% - custom token set (simple, extended)
+%  

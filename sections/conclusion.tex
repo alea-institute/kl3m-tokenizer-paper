@@ -1,0 +1,25 @@
+\section{Conclusion}
+
+In this paper, we presented the KL3M family of tokenizers for legal, financial, and governmental text processing. Our research demonstrates significant advantages of domain-specific tokenization for professional applications, with five key contributions:
+
+\begin{enumerate}
+    \item A methodology for domain-specific tokenization that balances learned tokens with curated domain-specific additions, building on foundational BPE work \cite{sennrich2016neural}.
+    
+    \item A dual-approach tokenizer family with standard BPE variants (64K-128K vocabulary) for efficient representation and character-level variants (4K-16K vocabulary) for OCR correction and text normalization.
+    
+    \item Quantitative efficiency improvements: Our analysis shows that \texttt{kl3m-004-128k-cased} achieves excellent tokenization efficiency with an average of 0.2417 tokens per character across datasets, representing a 9\% improvement over \texttt{gpt-4o} (0.2636) and \texttt{LLaMA3} (0.2647) despite being 35\% smaller than \texttt{gpt-4o}. While our uncased variant offers slightly better efficiency (0.2386 tokens per character), the cased model maintains important case distinctions necessary for many professional applications.
+    
+    \item Evidence that domain-specific tokenization preserves semantic integrity of specialized terminology and citation patterns critical to professional understanding, with \texttt{kl3m-004-128k-cased} requiring an average of just 3.65 tokens for domain-specific terms compared to 4.85 for \texttt{gpt-4o} (33\% more tokens) and 6.00 for \texttt{LLaMA3} (64\% more tokens).
+    
+    \item A rigorous evaluation framework for tokenizer performance in specialized domains, extending previous evaluation approaches \cite{rust2020good}.
+\end{enumerate}
+
+The efficiency advantages of \texttt{kl3m-004-128k-cased} are particularly pronounced for specialized content. For US Code, our cased tokenizer achieved 0.3181 tokens per character compared to 0.3716 for \texttt{gpt-4o} (a 17\% improvement) and 0.3717 for \texttt{LLaMA3} (a 17\% improvement). For SEC filings, our cased model achieved 0.1816 tokens per character compared to 0.1976 for \texttt{gpt-4o} (a 9\% improvement) and 0.1992 for \texttt{LLaMA3} (a 10\% improvement). This demonstrates that even against state-of-the-art tokenizers like \texttt{gpt-4o} and \texttt{LLaMA3}, domain-specialized tokenizers can provide substantial efficiency gains.
+
+Our domain term analysis provides even more compelling evidence for the value of specialized tokenization. For legal terminology, \texttt{kl3m-004-128k-cased} required an average of just 4.20 tokens per term, while \texttt{gpt-4o} needed 6.50 tokens (55\% more) and \texttt{LLaMA3} required 7.70 tokens (83\% more). For financial terms, the advantage persisted with KL3M requiring 3.10 tokens compared to 3.20 for \texttt{gpt-4o} and 4.30 for \texttt{LLaMA3} (39\% more). Key legal terms like "certiorari" required just 1 token in KL3M compared to 3 tokens in \texttt{gpt-4o} and 4 tokens in \texttt{LLaMA3}, while "11 U.S.C. § 362(a)" required 6 tokens in KL3M versus 10 tokens in \texttt{gpt-4o} and 11 tokens in \texttt{LLaMA3}.
+
+These efficiency gains directly translate to context window utilization, computational efficiency, and lower inference costs. For large legal or financial documents with thousands of domain-specific terms and citations, the 9-17\% overall efficiency improvement can substantially expand the effective context window, allowing more complete document understanding without truncation. This advantage becomes particularly important for long-document reasoning and question answering, where parsing and understanding references across a lengthy document is essential.
+
+Domain-specific tokenization represents an important frontier in NLP research. Building on domain-specific model work like Legal-BERT \cite{chalkidis2020legal} and FinBERT \cite{araci2019finbert}, our results suggest that tokenization customization can provide substantial benefits complementary to model specialization. Future work could extend to multilingual legal systems, additional professional domains, and dynamic vocabulary adaptation approaches.
+
+All KL3M tokenizers are publicly available through the Hugging Face Hub under the \texttt{alea-institute/} account to support researchers and practitioners working with legal, financial, and governmental text. The complete source code, including tokenizer training scripts and evaluation tools, is available on GitHub at \url{https://github.com/alea-institute/kl3m-tokenizers}. This open-source release enables full reproducibility and further extension of our work by the research community. Our work establishes that tokenization—far from being a solved problem—remains critical for domain-specific optimization as language models transform professional workflows in specialized domains.

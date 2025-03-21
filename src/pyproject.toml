@@ -1,0 +1,23 @@
+[project]
+name = "kl3m_tokenizer_analysis"
+authors = [{ name = "ALEA Institute", email = "hello@aleainstitute.ai" }]
+version = "0.1.0"
+description = "Analysis scripts for KL3M tokenizer paper"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "matplotlib>=3.5.0",
+    "numpy>=1.20.0",
+    "pandas>=1.3.0",
+    "seaborn>=0.11.0",
+    "tiktoken>=0.5.0",
+    "tokenizers>=0.13.0",
+    "scipy>=1.10.0",
+    "datasets>=2.13.0",
+    "transformers>=4.30.0",
+    "torch>=2.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
