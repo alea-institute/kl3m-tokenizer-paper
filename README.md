@@ -12,6 +12,7 @@
 
 - [Abstract](#abstract)
 - [Paper](#paper)
+  - [Read the Latest Version](main.pdf)
   - [Building the Paper](#building-the-paper)
   - [Paper Structure](#paper-structure)
 - [Code](#code)
