@@ -14,22 +14,26 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
 
-% Code formatting packages
-\usepackage{minted}
+% Code formatting packages - using listings instead of minted for arXiv compatibility
+\usepackage{listings}
 \usepackage{upquote}
 \usepackage{microtype}
 
-% Configure minted for better code formatting
-\setminted{
+% Configure listings for code formatting
+\lstset{
   frame=single,
   framesep=2mm,
-  baselinestretch=1.2,
-  fontsize=\footnotesize,
+  basicstyle=\footnotesize\ttfamily,
   breaklines=true,
   tabsize=4,
-  linenos=true,
-  style=default,
-  autogobble=true
+  numbers=left,
+  xleftmargin=2em,
+  numberstyle=\tiny\color{gray},
+  backgroundcolor=\color{white},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red!60!black},
+  showstringspaces=false
 }
 
 % Enable page numbering (plain style: number at bottom center)
@@ -49,6 +53,10 @@
     urlcolor=cyan,
     citecolor=blue
 }
+
+% For code listings that previously used minted
+\newcommand{\mintinline}[2]{\texttt{#2}}
+\newenvironment{minted}[1]{\begin{lstlisting}}{\end{lstlisting}}
 
 % Title information
 \title{KL3M Tokenizers: A Family of Domain-Specific and Character-Level Tokenizers for Legal, Financial, and Preprocessing Applications}
@@ -94,7 +102,7 @@ These tokenizers help professional applications by fitting more text in context 
 \input{sections/conclusion}
 
 \section{Acknowledgements}
-We drafted and revised this paper with the assistance of large language models.  All errors or omissions are our own.
+We drafted and revised this paper with the assistance of large language models. All errors or omissions are our own.
 
 % Bibliography
 \bibliographystyle{IEEEtran}
